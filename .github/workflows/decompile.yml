@@ -52,6 +52,13 @@ jobs:
           java -version
           & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" -help 2>&1 | Select-Object -First 3
 
+      - name: prepare dirs
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force C:\proj | Out-Null
+          New-Item -ItemType Directory -Force out | Out-Null
+          Get-ChildItem C:\proj
+
       - name: import without auto analysis
         shell: pwsh
         run: |
