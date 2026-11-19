@@ -2,125 +2,185 @@ name: decompile
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: write
 
 env:
-  GHIDRA_VER: 11.3.2
-  GHIDRA_DATE: 20250219
   SHARDS: 8
 
 jobs:
-  prep:
+  prepare:
     runs-on: windows-latest
-    outputs:
-      ghidra_url: ${{ steps.url.outputs.url }}
-    steps:
-      - name: resolve ghidra release url
-        id: url
-        shell: pwsh
-        run: |
-          $r = Invoke-RestMethod -Uri "https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/latest" -Headers @{ 'User-Agent' = 'gh' }
-          $asset = $r.assets | Where-Object { $_.name -like '*_PUBLIC_*.zip' } | Select-Object -First 1
-          if (-not $asset) { throw 'no ghidra asset' }
-          Write-Output "url=$($asset.browser_download_url)" >> $env:GITHUB_OUTPUT
-          Write-Output "resolved $($asset.name)"
-
-  analyze:
-    needs: prep
-    runs-on: windows-latest
-    timeout-minutes: 350
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: install python deps
+      - name: install pefile
         run: python -m pip install --quiet pefile
 
-      - name: normalize payload name
+      - name: static preflight
+        run: |
+          python tools/pe_info.py payload/fengqi.exe out
+          python tools/extract_strings.py payload/fengqi.exe out
+          python tools/go_strings.py payload/fengqi.exe out
+
+      - name: fetch ghidra
         shell: pwsh
         run: |
-          Get-ChildItem payload | Format-Table Name,Length
-          Move-Item -Force payload/fengqi.exe payload/target.exe
-          (Get-FileHash payload/target.exe -Algorithm SHA256).Hash
-
-      - name: pe info
-        run: python tools/pe_info.py payload/target.exe out
-
-      - name: extract frontend and strings
-        run: python tools/extract_strings.py payload/target.exe out
-
-      - name: export go function table
-        run: python tools/go_strings.py payload/target.exe out
-
-      - name: download and unpack ghidra
-        shell: pwsh
-        run: |
-          $url = "${{ needs.prep.outputs.ghidra_url }}"
-          Write-Output "downloading $url"
-          Invoke-WebRequest -Uri $url -OutFile ghidra.zip -UseBasicParsing
-          (Get-Item ghidra.zip).Length
+          $r = Invoke-RestMethod -Uri "https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/latest" -Headers @{ 'User-Agent' = 'gh' }
+          $asset = $r.assets | Where-Object { $_.name -like '*_PUBLIC_*.zip' } | Select-Object -First 1
+          if (-not $asset) { throw 'no ghidra asset' }
+          Write-Output "ghidra $($asset.name)"
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile ghidra.zip -UseBasicParsing
           Expand-Archive -Path ghidra.zip -DestinationPath ghidra -Force
           $root = Get-ChildItem ghidra -Directory | Select-Object -First 1
           Write-Output "GHIDRA_DIR=$($root.FullName)" >> $env:GITHUB_ENV
 
-      - name: prepare out dir
-        shell: pwsh
-        run: New-Item -ItemType Directory -Force out,c,out/c | Out-Null
-
-      - name: create ghidra project
+      - name: verify ghidra java
         shell: pwsh
         run: |
-          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -import payload\target.exe -overwrite -processor x86:LE:64:default -analysisTimeoutPerFile 3600 2>&1 | Tee-Object -FilePath out/analyze_import.log
+          java -version
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" -help 2>&1 | Select-Object -First 3
 
-      - name: apply go names
+      - name: import without auto analysis
         shell: pwsh
         run: |
-          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -process target.exe -noanalysis -scriptPath "$PWD\ghidra_scripts" -postScript ApplyGoNames.java "$PWD\out\pclntab_functions.txt" 2>&1 | Tee-Object -FilePath out/apply_names.log
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -import payload\fengqi.exe -overwrite -noanalysis -processor x86:LE:64:default 2>&1 | Tee-Object -FilePath out/import.log
 
-      - name: decompile all functions
+      - name: apply go function names
         shell: pwsh
         run: |
-          $hargs = @()
-          foreach ($i in 0..($env:SHARDS - 1)) {
-            $hargs = @("C:\proj", "fengqi", "-process", "target.exe", "-noanalysis", "-scriptPath", "$PWD\ghidra_scripts", "-postScript", "DecompileShard.java", "$PWD\out\c", "$i", "$env:SHARDS", "120")
-            & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" @hargs 2>&1 | Tee-Object -FilePath "out/decompile_$i.log"
-          }
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -process fengqi.exe -noanalysis -scriptPath "$PWD\ghidra_scripts" -postScript ApplyGoNames.java "$PWD\out\pclntab_functions.txt" 2>&1 | Tee-Object -FilePath out/apply_names.log
+
+      - name: run full auto analysis
+        shell: pwsh
+        run: |
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -process fengqi.exe -analysisTimeoutPerFile 7200 2>&1 | Tee-Object -FilePath out/analysis.log
+
+      - name: pack project
+        shell: pwsh
+        run: |
+          Compress-Archive -Path C:\proj\* -DestinationPath project.zip -Force
+          (Get-Item project.zip).Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ghidra-project
+          path: |
+            project.zip
+            out
+          retention-days: 5
+
+  decompile:
+    needs: prepare
+    runs-on: windows-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghidra-project
+
+      - name: fetch ghidra
+        shell: pwsh
+        run: |
+          $r = Invoke-RestMethod -Uri "https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/latest" -Headers @{ 'User-Agent' = 'gh' }
+          $asset = $r.assets | Where-Object { $_.name -like '*_PUBLIC_*.zip' } | Select-Object -First 1
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile ghidra.zip -UseBasicParsing
+          Expand-Archive -Path ghidra.zip -DestinationPath ghidra -Force
+          $root = Get-ChildItem ghidra -Directory | Select-Object -First 1
+          Write-Output "GHIDRA_DIR=$($root.FullName)" >> $env:GITHUB_ENV
+
+      - name: restore project
+        shell: pwsh
+        run: |
+          Expand-Archive -Path project.zip -DestinationPath C:\proj -Force
+          Get-ChildItem C:\proj | Select-Object Name
+          New-Item -ItemType Directory -Force out\c | Out-Null
+
+      - name: decompile shard
+        shell: pwsh
+        run: |
+          $a = @("C:\proj", "fengqi", "-process", "fengqi.exe", "-noanalysis", "-scriptPath", "$PWD\ghidra_scripts", "-postScript", "DecompileShard.java", "$PWD\out\c", "${{ matrix.shard }}", "$env:SHARDS", "180")
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" @a 2>&1 | Tee-Object -FilePath "out/decompile_${{ matrix.shard }}.log"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: out/c
+          retention-days: 30
+
+  finalize:
+    needs: decompile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          merge-multiple: true
+          path: out/c
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghidra-project
+          path: ghidra_out
+
+      - name: merge static outputs
+        run: |
+          cp -r ghidra_out/out/. out/ || true
+          ls -l out
+          ls -l out/c | head -20
 
       - name: build index
         run: python tools/build_index.py out
 
-      - name: summarize
-        shell: pwsh
+      - name: stats
         run: |
-          Get-ChildItem out -Recurse -File | Sort-Object Length -Descending | Select-Object -First 25 FullName,Length | Format-Table -AutoSize
+          wc -l out/index.txt out/failed.txt || true
+          du -sh out/c || true
+          head -20 out/index.txt || true
 
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: fengqi-decompiled
+          name: fengqi-decompiled-full
           path: out
           retention-days: 30
 
       - name: commit results
-        if: always()
         shell: bash
         run: |
           mkdir -p results
           cp -r out/. results/
+          rm -f results/project.zip
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A results
-          git commit -m "decompile results" || echo nothing-to-commit
+          git commit -m "decompiled output" || echo nothing-to-commit
           git push || echo push-failed
