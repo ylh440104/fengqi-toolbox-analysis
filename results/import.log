@@ -1,0 +1,67 @@
+INFO  Using log config file: jar:file:/D:/a/fengqi-toolbox-analysis/fengqi-toolbox-analysis/ghidra/ghidra_12.2_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml (LoggingInitialization)  
+INFO  Using log file: C:\Users\runneradmin\AppData\Roaming\ghidra\ghidra_12.2_PUBLIC\application.log (LoggingInitialization)  
+INFO  Loading user preferences: C:\Users\runneradmin\AppData\Roaming\ghidra\ghidra_12.2_PUBLIC\preferences (Preferences)  
+INFO  Searching for classes... (ClassSearcher)  
+INFO  Class search complete (1408 ms) (ClassSearcher)  
+INFO  Initializing SSL Context (DefaultSSLContextInitializer)  
+INFO  Initializing Random Number Generator... (SecureRandomFactory)  
+INFO  Random Number Generator initialization complete: SHA1PRNG (SecureRandomFactory)  
+INFO  Loaded 564 trusted CA certificates from the OS trust store. (DefaultTrustManagerFactory)  
+INFO  Loaded 118 trusted CA certificates from the Java default trust store. (DefaultTrustManagerFactory)  
+INFO  Starting cache cleanup: C:\Users\runneradmin\AppData\Local\ghidra\fscache2 (FileCacheMaintenanceDaemon)  
+INFO  Finished cache cleanup, estimated storage used: 0 (FileCacheMaintenanceDaemon)  
+INFO  Headless startup complete (7873 ms) (AnalyzeHeadless)  
+INFO  Class searcher loaded 60 extension points (19 false positives) (ClassSearcher)  
+INFO  HEADLESS Script Paths:
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\Decompiler\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Processors\PIC\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\BSim\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\BytePatterns\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Processors\Atmel\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Debug\Debugger-rmi-trace\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\DecompilerDependent\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\Base\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\GnuDemangler\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\VersionTracking\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\PyGhidra\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\FileFormats\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Processors\JVM\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Processors\DATA\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\PDB\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\Swift\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\MicrosoftCodeAnalyzer\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Debug\Debugger\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\SystemEmulation\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\FunctionID\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Features\WildcardAssembler\ghidra_scripts
+    D:\a\fengqi-toolbox-analysis\fengqi-toolbox-analysis\ghidra\ghidra_12.2_PUBLIC\Ghidra\Processors\8051\ghidra_scripts (HeadlessAnalyzer)  
+INFO  HEADLESS: execution starts (HeadlessAnalyzer)  
+INFO  Creating project: C:\proj\fengqi (HeadlessAnalyzer)  
+INFO  Creating project: C:\proj\fengqi (DefaultProject)  
+INFO  REPORT: Processing input files:  (HeadlessAnalyzer)  
+INFO       project: C:\proj\fengqi (HeadlessAnalyzer)  
+INFO  IMPORTING: file:///D:/a/fengqi-toolbox-analysis/fengqi-toolbox-analysis/payload/fengqi.exe (HeadlessAnalyzer)  
+INFO  Using Loader: Portable Executable (PE) (ProgramLoader)  
+INFO  Using Language/Compiler: x86:LE:64:default:windows (ProgramLoader)  
+INFO  Using Library Search Path: [., C:\Windows\SysWOW64, C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.5-8.0\x64\bin, C:\Windows\Sun\Java\bin, C:\Windows\system32, C:\Windows, C:\Program Files\PowerShell\7, C:\Users\runneradmin\AppData\Roaming\Python\Python311\Scripts, C:\hostedtoolcache\windows\Python\3.11.9\x64\Scripts, C:\hostedtoolcache\windows\Python\3.11.9\x64, C:\Program Files\MongoDB\Server\7.0\bin, C:\vcpkg, C:\tools\zstd, C:\hostedtoolcache\windows\stack\3.11.1\x64, C:\cabal\bin, C:\\ghcup\bin, C:\mingw64\bin, C:\Program Files\dotnet, C:\Program Files\MySQL\MySQL Server 8.4\bin, C:\Program Files\R\R-4.6.2\bin\x64, C:\SeleniumWebDrivers\GeckoDriver, C:\SeleniumWebDrivers\EdgeDriver\, C:\SeleniumWebDrivers\ChromeDriver, C:\Program Files (x86)\sbt\bin, C:\Program Files (x86)\GitHub CLI, C:\Program Files\Git\bin, C:\Program Files (x86)\pipx_bin, C:\npm\prefix, C:\hostedtoolcache\windows\go\1.24.13\x64\bin, C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts, C:\hostedtoolcache\windows\Python\3.12.10\x64, C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin, C:\Program Files\OpenSSL\bin, C:\tools\kotlinc\bin, C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.21-9\x64\bin, C:\Program Files\ImageMagick-7.1.2-Q16-HDRI, C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin, C:\ProgramData\kind, C:\ProgramData\Chocolatey\bin, C:\Windows\System32\Wbem, C:\Windows\System32\WindowsPowerShell\v1.0\, C:\Windows\System32\OpenSSH\, C:\Program Files\WSL\, C:\Program Files\PowerShell\7\, C:\Program Files\Microsoft\Web Platform Installer\, C:\Program Files\Microsoft SQL Server\170\Tools\Binn\, C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\, C:\Program Files\dotnet\, C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\, C:\Program Files (x86)\WiX Toolset v3.14\bin, C:\Program Files\Microsoft SQL Server\130\DTS\Binn\, C:\Program Files\Microsoft SQL Server\140\DTS\Binn\, C:\Program Files\Microsoft SQL Server\150\DTS\Binn\, C:\Program Files\Microsoft SQL Server\160\DTS\Binn\, C:\Program Files\Microsoft SQL Server\170\DTS\Binn\, C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin, C:\Program Files\CMake\bin, C:\Strawberry\c\bin, C:\Strawberry\perl\site\bin, C:\Strawberry\perl\bin, C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin, C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code, C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager, C:\Program Files\LLVM\bin, C:\Program Files (x86)\LLVM\bin, C:\Program Files\nodejs\, C:\Program Files\Git\cmd, C:\Program Files\Git\ucrt64\bin, C:\Program Files\Git\usr\bin, C:\Program Files\GitHub CLI\, c:\tools\php, C:\Program Files\Amazon\AWSCLIV2\, C:\Program Files\Amazon\SessionManagerPlugin\bin\, C:\Program Files\Amazon\AWSSAMCLI\bin\, C:\Program Files\Microsoft SQL Server\130\Tools\Binn\, C:\Program Files\mongosh\, C:\Users\runneradmin\.dotnet\tools, C:\Users\runneradmin\.cargo\bin, C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps] (ProgramLoader)  
+INFO  Additional info:
+Loading file:///D:/a/fengqi-toolbox-analysis/fengqi-toolbox-analysis/payload/fengqi.exe?MD5=d392fd01b2be70279f0bf25185e24d93...
+------------------------------------------------
+
+Searching 70 paths for library KERNEL32.DLL...
+Skipping library which is the wrong architecture: file:///C:/Windows/SysWOW64/kernel32.dll
+Loading file:///C:/Windows/System32/kernel32.dll?MD5=3c12f8ef05c766061b16e908695e530d...
+Created exports file: C:\Users\runneradmin\AppData\Roaming\ghidra\ghidra_12.2_PUBLIC\symbols\win64\kernel32.exports
+Library not saved to project.
+------------------------------------------------
+
+Applying cached symbols from KERNEL32.DLL
+Linking the External Programs of 'fengqi.exe' to imported libraries...
+  [KERNEL32.DLL] -> not found in project
+------------------------------------------------
+
+ (ProgramLoader)  
+INFO  IMPORTING: Loaded 0 additional files (HeadlessAnalyzer)  
+INFO  /fengqi.exe: file created (runneradmin) (LocalFileSystem)  
+INFO  REPORT: Save succeeded for: /fengqi.exe (fengqi:/fengqi.exe) (HeadlessAnalyzer)  
+INFO  REPORT: Import succeeded (HeadlessAnalyzer)  
