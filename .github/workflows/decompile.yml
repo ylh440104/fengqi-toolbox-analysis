@@ -1,0 +1,126 @@
+name: decompile
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  GHIDRA_VER: 11.3.2
+  GHIDRA_DATE: 20250219
+  SHARDS: 8
+
+jobs:
+  prep:
+    runs-on: windows-latest
+    outputs:
+      ghidra_url: ${{ steps.url.outputs.url }}
+    steps:
+      - name: resolve ghidra release url
+        id: url
+        shell: pwsh
+        run: |
+          $r = Invoke-RestMethod -Uri "https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/latest" -Headers @{ 'User-Agent' = 'gh' }
+          $asset = $r.assets | Where-Object { $_.name -like '*_PUBLIC_*.zip' } | Select-Object -First 1
+          if (-not $asset) { throw 'no ghidra asset' }
+          Write-Output "url=$($asset.browser_download_url)" >> $env:GITHUB_OUTPUT
+          Write-Output "resolved $($asset.name)"
+
+  analyze:
+    needs: prep
+    runs-on: windows-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: install python deps
+        run: python -m pip install --quiet pefile
+
+      - name: normalize payload name
+        shell: pwsh
+        run: |
+          Get-ChildItem payload | Format-Table Name,Length
+          Move-Item -Force payload/fengqi.exe payload/target.exe
+          (Get-FileHash payload/target.exe -Algorithm SHA256).Hash
+
+      - name: pe info
+        run: python tools/pe_info.py payload/target.exe out
+
+      - name: extract frontend and strings
+        run: python tools/extract_strings.py payload/target.exe out
+
+      - name: export go function table
+        run: python tools/go_strings.py payload/target.exe out
+
+      - name: download and unpack ghidra
+        shell: pwsh
+        run: |
+          $url = "${{ needs.prep.outputs.ghidra_url }}"
+          Write-Output "downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile ghidra.zip -UseBasicParsing
+          (Get-Item ghidra.zip).Length
+          Expand-Archive -Path ghidra.zip -DestinationPath ghidra -Force
+          $root = Get-ChildItem ghidra -Directory | Select-Object -First 1
+          Write-Output "GHIDRA_DIR=$($root.FullName)" >> $env:GITHUB_ENV
+
+      - name: prepare out dir
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force out,c,out/c | Out-Null
+
+      - name: create ghidra project
+        shell: pwsh
+        run: |
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -import payload\target.exe -overwrite -processor x86:LE:64:default -analysisTimeoutPerFile 3600 2>&1 | Tee-Object -FilePath out/analyze_import.log
+
+      - name: apply go names
+        shell: pwsh
+        run: |
+          & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" C:\proj fengqi -process target.exe -noanalysis -scriptPath "$PWD\ghidra_scripts" -postScript ApplyGoNames.java "$PWD\out\pclntab_functions.txt" 2>&1 | Tee-Object -FilePath out/apply_names.log
+
+      - name: decompile all functions
+        shell: pwsh
+        run: |
+          $hargs = @()
+          foreach ($i in 0..($env:SHARDS - 1)) {
+            $hargs = @("C:\proj", "fengqi", "-process", "target.exe", "-noanalysis", "-scriptPath", "$PWD\ghidra_scripts", "-postScript", "DecompileShard.java", "$PWD\out\c", "$i", "$env:SHARDS", "120")
+            & "$env:GHIDRA_DIR\support\analyzeHeadless.bat" @hargs 2>&1 | Tee-Object -FilePath "out/decompile_$i.log"
+          }
+
+      - name: build index
+        run: python tools/build_index.py out
+
+      - name: summarize
+        shell: pwsh
+        run: |
+          Get-ChildItem out -Recurse -File | Sort-Object Length -Descending | Select-Object -First 25 FullName,Length | Format-Table -AutoSize
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fengqi-decompiled
+          path: out
+          retention-days: 30
+
+      - name: commit results
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p results
+          cp -r out/. results/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A results
+          git commit -m "decompile results" || echo nothing-to-commit
+          git push || echo push-failed
