@@ -1,0 +1,189 @@
+{
+  "machine": "0x8664",
+  "entry": "0x46e160",
+  "imagebase": "0x400000",
+  "subsystem": 2,
+  "dllchar": "0x8160",
+  "sec": [
+    {
+      "name": ".text",
+      "vsize": 2712358,
+      "vaddr": "0x1000",
+      "rawsize": 2712576,
+      "rawoff": "0x600",
+      "chars": "0x60000020"
+    },
+    {
+      "name": ".rdata",
+      "vsize": 2829416,
+      "vaddr": "0x298000",
+      "rawsize": 2829824,
+      "rawoff": "0x296a00",
+      "chars": "0x40000040"
+    },
+    {
+      "name": ".data",
+      "vsize": 1120128,
+      "vaddr": "0x54b000",
+      "rawsize": 539648,
+      "rawoff": "0x549800",
+      "chars": "0xc0000040"
+    },
+    {
+      "name": ".pdata",
+      "vsize": 62760,
+      "vaddr": "0x65d000",
+      "rawsize": 62976,
+      "rawoff": "0x5cd400",
+      "chars": "0x40000040"
+    },
+    {
+      "name": ".xdata",
+      "vsize": 180,
+      "vaddr": "0x66d000",
+      "rawsize": 512,
+      "rawoff": "0x5dca00",
+      "chars": "0x40000040"
+    },
+    {
+      "name": ".idata",
+      "vsize": 1364,
+      "vaddr": "0x66e000",
+      "rawsize": 1536,
+      "rawoff": "0x5dcc00",
+      "chars": "0xc0000040"
+    },
+    {
+      "name": ".reloc",
+      "vsize": 55236,
+      "vaddr": "0x66f000",
+      "rawsize": 55296,
+      "rawoff": "0x5dd200",
+      "chars": "0x42000040"
+    },
+    {
+      "name": ".symtab",
+      "vsize": 4,
+      "vaddr": "0x67d000",
+      "rawsize": 512,
+      "rawoff": "0x5eaa00",
+      "chars": "0x42000000"
+    },
+    {
+      "name": ".rsrc",
+      "vsize": 371688,
+      "vaddr": "0x67e000",
+      "rawsize": 371712,
+      "rawoff": "0x5eac00",
+      "chars": "0x40000040"
+    }
+  ],
+  "resources": [
+    {
+      "type": "RT_ICON",
+      "id": 3,
+      "lang": 1033,
+      "size": 270376
+    },
+    {
+      "type": "RT_ICON",
+      "id": 4,
+      "lang": 1033,
+      "size": 67624
+    },
+    {
+      "type": "RT_ICON",
+      "id": 5,
+      "lang": 1033,
+      "size": 16936
+    },
+    {
+      "type": "RT_ICON",
+      "id": 6,
+      "lang": 1033,
+      "size": 9640
+    },
+    {
+      "type": "RT_ICON",
+      "id": 7,
+      "lang": 1033,
+      "size": 4264
+    },
+    {
+      "type": "RT_ICON",
+      "id": 8,
+      "lang": 1033,
+      "size": 1128
+    },
+    {
+      "type": "RT_GROUP_ICON",
+      "id": 2,
+      "lang": 1033,
+      "size": 90
+    },
+    {
+      "type": "RT_MANIFEST",
+      "id": 1,
+      "lang": 1033,
+      "size": 1152
+    }
+  ],
+  "version": [],
+  "imports": [
+    {
+      "dll": "kernel32.dll",
+      "funcs": [
+        "WriteFile",
+        "WriteConsoleW",
+        "WerSetFlags",
+        "WerGetFlags",
+        "WaitForMultipleObjects",
+        "WaitForSingleObject",
+        "VirtualQuery",
+        "VirtualFree",
+        "VirtualAlloc",
+        "TlsAlloc",
+        "SwitchToThread",
+        "SuspendThread",
+        "SetWaitableTimer",
+        "SetProcessPriorityBoost",
+        "SetEvent",
+        "SetErrorMode",
+        "SetConsoleCtrlHandler",
+        "RtlVirtualUnwind",
+        "RtlLookupFunctionEntry",
+        "ResumeThread",
+        "RaiseFailFastException",
+        "PostQueuedCompletionStatus",
+        "LoadLibraryW",
+        "LoadLibraryExW",
+        "SetThreadContext",
+        "GetThreadContext",
+        "GetSystemInfo",
+        "GetSystemDirectoryA",
+        "GetStdHandle",
+        "GetQueuedCompletionStatusEx",
+        "GetProcessAffinityMask",
+        "GetProcAddress",
+        "GetErrorMode",
+        "GetEnvironmentStringsW",
+        "GetCurrentThreadId",
+        "GetConsoleMode",
+        "FreeEnvironmentStringsW",
+        "ExitProcess",
+        "DuplicateHandle",
+        "CreateWaitableTimerExW",
+        "CreateThread",
+        "CreateIoCompletionPort",
+        "CreateFileA",
+        "CreateEventA",
+        "CloseHandle",
+        "AddVectoredExceptionHandler",
+        "AddVectoredContinueHandler"
+      ]
+    }
+  ],
+  "pe_machine": "0x8664",
+  "timestamp": 0,
+  "compile_time": "1970-01-01 00:00:00"
+}

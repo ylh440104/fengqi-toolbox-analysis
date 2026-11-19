@@ -1,0 +1,13 @@
+WARNING: JAVA_HOME environment specifies unsupported java version: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\21.0.13-9.0\x64
+******************************************************************
+JDK 25+ (64-bit) could not be found and must be manually chosen!
+******************************************************************
+java.lang.NullPointerException: Cannot invoke "String.trim()" because the return value of "java.io.BufferedReader.readLine()" is null
+	at LaunchSupport.askJavaHome(LaunchSupport.java:301)
+	at LaunchSupport.handleJavaHome(LaunchSupport.java:152)
+	at LaunchSupport.main(LaunchSupport.java:114)
+WARNING: JAVA_HOME environment specifies unsupported java version: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\21.0.13-9.0\x64
+Enter path to JDK home directory (ENTER for dialog): 
+ERROR: Failed to find a supported JDK.
+Please refer to the Getting Started document's Troubleshooting section.
+Press any key to continue . . . 
